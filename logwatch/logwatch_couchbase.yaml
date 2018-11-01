@@ -1,0 +1,128 @@
+# ---
+# override list of alerts to report and search for. i.e. attempts to match text against text from event
+# alerts:
+# - name: Node was auto-failed-over
+#   description: The sending node has been failed over automatically.
+#   text: Node .* was automatically failed over
+# - name: Maximum number of auto-failed-over nodes was reached.
+#   description: The auto-failover system stops auto-failover when the maximum number
+#     of spare nodes available has been reached.
+#   text: Could not auto-failover more nodes *.
+# - name: Node wasn't auto-failedover as other nodes are down at the same time
+#   description: Auto-failover does not take place if there is already a node down.
+#   text: There was at least another node down
+# - name: Node was not autofailed-over as there are not enough nodes in the cluster
+#     running the same service
+#   description: You cannot support autofailover with less than three nodes.
+#   text: Number of remaining nodes that are running .* service is .* You need at least .* nodes
+# - name: Node was not autofailed-over as auto-failover for one or more services running
+#     on the node is disabled
+#   description: Fired when a node is not autofailedover because auto-failover for one
+#     of the services running on the node is disabled.
+#   text: Auto-failover for .* service is disabled
+# - name: Node's IP address has changed unexpectedly
+#   description: The IP address of the node has changed, which may indicate a network
+#     interface, operating system, or other network or system failure.
+#   text: IP address seems to have changed
+# - name: Disk space used for persistent storage has reached at least 90% of capacity
+#   description: The disk device configured for storage of persistent data is nearing
+#     full capacity.
+#   text: Approaching full disk warning
+# - name: Metadata overhead is more than 50%
+#   description: The amount of data required to store the metadata information for your
+#     dataset is now greater than 50% of the available RAM.
+#   text: Metadata overhead warning
+# - name: Bucket memory on a node is entirely used for metadata
+#   description: All the available RAM on a node is being used to store the metadata
+#     for the objects stored. This means that there is no memory available for caching
+#     values. With no memory left for storing metadata, further requests to store data
+#     will also fail.
+#   text: Hard out-of-memory error
+# - name: Writing data to disk for a specific bucket has failed
+#   description: The disk or device used for persisting data has failed to store persistent
+#     data for a bucket.
+#   text: Write Commit Failure
+# - name: Writing event to audit log has failed
+#   description: Couchbase was unable to write an administrative event to the audit
+#     log.
+#   text: Audit Write Failure
+# - name: Approaching full Indexer RAM warning
+#   description: The Indexer RAM utilization is approaching the configured quota. The
+#     indexer may soon pause.
+#   text: 'Warning: approaching max index RAM'
+# - name: Remote mutation timestamp exceeded drift threshold
+#   description: The remote mutation timestamp exceeded drift threshold warning.
+#   text: 'Please ensure that NTP is set up correctly'
+# - name: Communication issues among some nodes in the cluster
+#   description: There are some communication issues in some nodes within the cluster.
+#   text: 'Warning: Node .* is having issues communicating with following nodes'
+
+# Return results for all nodes in the cluster
+# all: false
+
+# The hostname of the Couchbase cluster
+# cluster: localhost
+
+# Do not use, path to config file
+# config: null
+
+# Do not use, dump the config to yaml
+# dump: false
+
+# The file to write results to
+file: /var/log/couchbase/logwatch_couchbase.rpt
+
+# The format in which to print results. The str of str.format(). {host}, {cluster_name}, {alert}, {status} are the only variables
+# format: "host: {host}    cluster_name: {cluster_name}    alert: {alert}    status: {status}"
+
+# logging config, both may be enabled at same time, update filename to point to location of choice. i.e. /var/log/couchbase/logwatch_couchbase.log
+logging:
+  formatters:
+    simple:
+      format: '%(asctime)s %(levelname)s %(message)s'
+    simple_syslog:
+      format: 'Couchbase %(levelname)s %(message)s'
+  handlers:
+    # console:
+    #   class: logging.StreamHandler
+    #   formatter: simple
+    #   level: DEBUG
+    #   stream: ext://sys.stdout
+    file:
+      class: logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: simple
+      filename: /var/log/couchbase/logwatch_couchbase.log
+      maxBytes: 1000000
+      backupCount: 3
+    # syslog:
+    #   class: logging.handlers.SysLogHandler
+    #   formatter: simple_syslog
+    #   address: /dev/log
+    #   facility: user
+    #   level: WARNING
+  root:
+    handlers:
+    # - console
+    - file
+    # - syslog
+    level: INFO
+  version: 1
+
+# The number of minutes to search back. i.e. events older than now - n minutes
+# minutes: 15
+
+# The password of the Couchbase cluster
+password: secret
+
+# The port of the Couchbase cluster
+# port: 8091
+
+# The protocol of the Couchbase cluster. http or https
+# protocol: http
+
+# The username of the Couchbase cluster
+username: readonly
+
+# Enable debugging logging
+# verbose: false
