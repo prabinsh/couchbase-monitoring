@@ -92,7 +92,7 @@ def weekday(number):
 
 # retrive the list of backups
 def get_backup_list(config):
-    regex = "(\d{4})-(\d{2})-(\d{2})T(\d{2})_(\d{2})_(\d{2})\.(\d+)-(\d{2})_(\d{2})"
+    regex = "(\d{4})-(\d{2})-(\d{2})T(\d{2})_(\d{2})_(\d{2})(\S+)"
 
     cmd =  [
         config["cbbackupmgr"], "list", 
