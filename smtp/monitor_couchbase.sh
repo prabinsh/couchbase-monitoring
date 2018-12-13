@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-SEVERITY="critical"
+SEVERITY="CRITICAL"
 TO="couchbase@rackspace.com"
 FROM="couchbase@rackspace.com"
 MINUTES=5
@@ -43,8 +43,8 @@ function grep_file() {
     then
         echo "${DIR}/${1} is older than $MINUTES minutes or doesnt exist"
     else
-        COUNT=$(grep -i 'critical\|unsuccessful\|true' ${RPT} | wc -l)
-        echo "grep -i 'critical\|unsuccessful\|true' $RPT | wc -l: $COUNT"
+        COUNT=$(grep 'CRITICAL' ${RPT} | wc -l)
+        echo "grep 'CRITICAL' $RPT | wc -l: $COUNT"
     fi
 
     if [ $COUNT -gt 0 ]

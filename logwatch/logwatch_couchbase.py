@@ -205,15 +205,15 @@ def process_node_logs(host, port, cluster_name, config, results):
         # cycle through configered alerts and search each filtered event
         for alert in config["alerts"]:
             logging.debug("searching events for text: {}".format(alert["text"]))
-            status = False
+            status = "OK"
             for event in events:
                 if re.search(alert["text"], event["text"], flags=re.IGNORECASE):
                     logging.debug("match found for event: {}".format(json.dumps(event, indent=4, sort_keys=True)))
-                    status = True
+                    status = "CRITICAL"
                         
             results.append({"host": host, "cluster_name": cluster_name, "alert": alert["name"], "status": status})
     else:
-        results.append({"host": host, "cluster_name": cluster_name, "alert": "Failed to complete request to Couchbase", "status": True})
+        results.append({"host": host, "cluster_name": cluster_name, "alert": "failed to complete request to node", "status": "CRITICAL"})
     return results
 
 
@@ -227,7 +227,7 @@ def send_stdout(results, config):
 def send_file(results, config):
     # [logging.info(config["format"].format(**result)) for result in results]
     for result in results:
-        if result.get("status"):
+        if result.get("status") in ("CRITICAL"):
             logging.critical(config["format"].format(**result))
         else:
             logging.info(config["format"].format(**result))
@@ -260,7 +260,7 @@ def main():
     cluster_name = pools_default.get("clusterName", "default")
 
     # retrieve all nodes of cluster
-    nodes = pools_default.get("nodes", [])
+    nodes = pools_default.get("nodes", [{"thisNode": True}])
 
     for node in nodes:
         if config["all"] is False and "thisNode" not in node:

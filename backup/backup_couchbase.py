@@ -228,9 +228,9 @@ def merge(config, backups):
 # log unsucessful and exit
 def send_exit(config, action="backup_couchbase.py", error=False):
     if error is True:
-        results = [{"host": config["cluster"], "action": action, "status": "Unsuccessful"}]
+        results = [{"host": config["cluster"], "action": action, "status": "CRITICAL"}]
     else:
-        results = [{"host": config["cluster"], "action": action, "status": "Successful"}]
+        results = [{"host": config["cluster"], "action": action, "status": "OK"}]
     
     if config["file"]:
         send_file(results, config)
@@ -247,7 +247,7 @@ def send_stdout(results, config):
 def send_file(results, config):
     # [logging.info(config["format"].format(**result)) for result in results]
     for result in results:
-        if result.get("status") in ("Unsuccessful"):
+        if result.get("status") in ("CRITICAL"):
             logging.critical(config["format"].format(**result))
         else:
             logging.info(config["format"].format(**result))
@@ -276,9 +276,13 @@ def main():
     if config["create"] is True:
         create(config)
 
-    backup(config, get_backup_list(config))
-    compact(config, get_backup_list(config))
-    merge(config, get_backup_list(config))
+    try:
+        backup(config, get_backup_list(config))
+        compact(config, get_backup_list(config))
+        merge(config, get_backup_list(config))
+    except Exception as e:
+        logging.error("executing cbbackupmgr command")
+        send_exit(config, error=True)
 
     send_exit(config, error=False)
 

@@ -63,6 +63,9 @@ def main():
     # retrieve all nodes of cluster
     nodes = pools_default.get("nodes", [])
 
+    if nodes == []:
+        results.append({"host": config["cluster"], "metric": {"crit": "unhealthy", "warn": "unhealthy", "op": "=", "metric": "connectionStatus", "description": "communication with node"}, "value": "unhealthy", "label": "node"})
+
     for node in nodes:
         if config["all"] is False and "thisNode" not in node:
             continue
