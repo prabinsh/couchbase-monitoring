@@ -62,6 +62,7 @@ function tag_file() {
     else
         echo "tagging $RPT with hostname: $HOSTNAME and ip: $HOSTIP"
         echo "" >> $RPT
+        echo "service: couchbase" >> $RPT
         echo "hostname: $HOSTNAME" >> $RPT
         echo "ip: $HOSTIP" >> $RPT
     fi
