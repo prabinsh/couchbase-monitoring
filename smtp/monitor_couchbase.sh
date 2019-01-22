@@ -49,6 +49,7 @@ function grep_file() {
 
     if [ $COUNT -gt 0 ]
     then
+        echo "mailx -s $SEVERITY -r $FROM $TO"
         mailx -s $SEVERITY -r $FROM $TO < $RPT
     fi
 }
@@ -60,11 +61,12 @@ function tag_file() {
     then
         echo "${DIR}/${1} is older than $MINUTES minutes or doesnt exist"
     else
-        echo "tagging $RPT with hostname: $HOSTNAME and ip: $HOSTIP"
+        echo "tagging $RPT with service: couchbase, hostname: $HOSTNAME, ip: $HOSTIP, type: $2"
         echo "" >> $RPT
         echo "service: couchbase" >> $RPT
         echo "hostname: $HOSTNAME" >> $RPT
         echo "ip: $HOSTIP" >> $RPT
+        echo "type: $2" >> $RPT
     fi
 }
 
@@ -137,7 +139,7 @@ if [ $CHECK == 'true' ]
 then
     echo "/opt/couchbase/scripts/check_couchbase.py --config /opt/couchbase/scripts/check_couchbase.yaml"
     /opt/couchbase/scripts/check_couchbase.py --config /opt/couchbase/scripts/check_couchbase.yaml
-    tag_file $VAR1
+    tag_file $VAR1 "check"
     grep_file $VAR1
     exit 0
 fi
@@ -146,7 +148,7 @@ if [ $LOGWATCH == 'true' ]
 then
     echo "/opt/couchbase/scripts/logwatch_couchbase.py --config /opt/couchbase/scripts/logwatch_couchbase.yaml"
     /opt/couchbase/scripts/logwatch_couchbase.py --config /opt/couchbase/scripts/logwatch_couchbase.yaml
-    tag_file $VAR1
+    tag_file $VAR1 "logwatch"
     grep_file $VAR1
     exit 0
 fi
@@ -155,7 +157,7 @@ if [ $BACKUP == 'true' ]
 then
     echo "/opt/couchbase/scripts/backup_couchbase.py --config /opt/couchbase/scripts/backup_couchbase.yaml"
     /opt/couchbase/scripts/backup_couchbase.py --config /opt/couchbase/scripts/backup_couchbase.yaml
-    tag_file $VAR1
+    tag_file $VAR1 "backup"
     grep_file $VAR1
     exit 0
 fi
