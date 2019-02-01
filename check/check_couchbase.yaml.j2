@@ -1,0 +1,248 @@
+# ---
+# Return metrics for all cluster nodes
+# all: false
+
+# The bucket to return statistics on
+# bucket: all
+
+# The hostname of the Couchbase cluster
+# cluster: localhost
+
+# Do not use, path to config file
+# config: null
+
+#  Metrics are monitored by service: node, data, xdcr
+#
+#  Metrics have 5 possible values:
+#  Required:
+#    metric: the Couchbase REST API metric to check
+#    description: used to construct the service name
+#  Optional:
+#    warn: the warning alert threshold
+#    crit: the critical alert threshold
+#    op: operator used to compare the current value against the thresholds
+#
+#  The statuses sent to the monitor are defined by the configured thresholds along
+#  with an implicit "OK".  Not specifying thresholds will result in "OK"
+#  always being sent to the monitor.
+#
+#  "op" allows you to define the operator used when evaluating thresholds
+#  againt the current value.  Options are: ">", ">=", "=", "<=", "<"
+#  The default operator is ">="
+
+# Data service
+#  Metrics are configurable by bucket, allowing thresholds to be customized.
+#
+#  The bucket name is specified by the "bucket" parameter.
+#
+#  Special name "all" will evaluate the configured metrics and thresholds for
+#  all buckets
+#
+#  Metric names are documented here:
+#  https://github.com/couchbase/ep-engine/blob/master/docs/stats.org
+#
+#  The following calculated metrics have been added:
+#    percent_quota_utilization: mem_used / ep_mem_high_wat
+#    percent_metadata_utilization: ep_meta_data_memory / ep_mem_high_wat
+#    disk_write_queue: ep_queue_size + ep_flusher_todo
+#    total_ops: cmd_get + cmd_set + incr_misses + incr_hits + decr_misses + decr_hits + delete_misses + delete_hits
+# data:
+# - metric: percent_quota_utilization
+#   description: percent bucket quota used
+#   warn: 95
+#   crit: 95
+#   op: ">="
+# - metric: percent_metadata_utilization
+#   description: percent bucket quota used by metadata
+#   warn: 50
+#   crit: 50
+#   op: ">="
+# - metric: disk_write_queue
+#   description: items in disk write queue
+#   warn: 10000
+#   crit: 10000
+#   op: ">="
+# - metric: curr_connections
+#   description: client connections
+#   warn: 10000
+#   crit: 10000
+#   op: ">="
+# - metric: ep_dcp_replica_backoff
+#   description: internal replication backoffs
+#   warn: 1
+#   crit: 1
+#   op: ">="
+# - metric: ep_dcp_xdcr_backoff
+#   description: XDCR backoffs
+#   warn: 1
+#   crit: 1
+#   op: ">="
+# - metric: ep_oom_errors
+#   description: out of memory errors
+#   warn: 1
+#   crit: 1
+#   op: ">="
+# - metric: ep_tmp_oom_errors
+#   description: temporary out of memory errors
+#   warn: 1
+#   crit: 1
+#   op: ">="
+# - metric: vb_active_resident_items_ratio
+#   description: percent active items in memory
+#   warn: 15
+#   crit: 15
+#   op: "<="
+# - metric: vb_replica_resident_items_ratio
+#   description: percent replica items in memory
+#   warn: 15
+#   crit: 15
+#   op: "<="
+# - metric: vb_avg_total_queue_age
+#   description: disk write queue average age
+#   warn: 5
+#   crit: 5
+#   op: ">="
+
+# Do not use, dump the config to yaml
+# dump: true
+
+# The file to write results to
+file: /var/log/couchbase/check_couchbase.rpt
+
+# The format in which to print results. The str of str.format(). {host}, {cluster_name}, {warn}, 
+# {crit}, {description}, {label}, {value}, {status}, {op} are the only variables
+format: '{host}:{cluster_name}:{label}:{metric}:{value}:{status}'
+
+# Full Text Search (FTS) service
+#  All metric names documented here (under Vitals):
+#  https://developer.couchbase.com/documentation/server/current/rest-api/rest-fts-indexing.html#topic_hpd_2y4_1v__g-api-stats
+#
+#  Note that these metrics will be applied to each FTS index independently
+# fts:
+#  - metric: num_mutations_to_index
+#    description: items in FTS indexer queue
+#    warn: 2000
+#    crit: 5000
+#  - metric: total_queries_slow  # commented until a rate metric is available
+#    description: FTS slow searches  # queries that take longer than 5 seconds 
+#    warn: 100
+#    crit: 1000
+#  - metric: total_queries_timeout
+#    description: FTS search timeouts # commented until a rate metric is available
+#    warn: 100
+#    crit: 1000
+#  - metric: total_queries_error # commented until a rate metric is available
+#    description: FTS search errors 
+#    warn: 100
+#    crit: 1000
+
+# The port of the Couchbase cluster FTS service
+# fts_port: 8094
+
+# logging config, both may be enabled at same time, update filename to point to location of choice. i.e. /var/log/couchbase/check_couchbase.log
+logging:
+  formatters:
+    simple:
+      format: '%(asctime)s %(levelname)s %(message)s'
+    simple_syslog:
+      format: 'Couchbase %(levelname)s %(message)s'
+  handlers:
+    # console:
+    #   class: logging.StreamHandler
+    #   formatter: simple
+    #   level: DEBUG
+    #   stream: ext://sys.stdout
+    file:
+      class: logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: simple
+      filename: /var/log/couchbase/check_couchbase.log
+      maxBytes: 1000000
+      backupCount: 3
+    # syslog:
+    #   class: logging.handlers.SysLogHandler
+    #   formatter: simple_syslog
+    #   address: /dev/log
+    #   facility: user
+    #   level: WARNING
+  root:
+    handlers:
+    # - console
+    - file
+    # - syslog
+    level: INFO
+  version: 1
+
+# Node Stats
+# node:
+# - metric: status
+#   description: health status
+#   warn: warmup
+#   crit: unhealthy
+#   op: "="
+# - metric: clusterMembership
+#   description: cluster membership
+#   warn: inactiveAdded
+#   crit: inactiveFailed
+#   op: "="
+
+# The password of the Couchbase cluster
+password: {{ mon_pass }}
+
+# The port of the Couchbase cluster
+# port: 8091
+
+# The protocol of the Couchbase cluster. http or https
+# protocol: http
+
+# Query service
+#  All metric names documented here (under Vitals):
+#  https://developer.couchbase.com/documentation/server/current/tools/query-monitoring.html
+# query:
+#   - metric: request_timer.75%
+#     description: 75th percentile query response time
+#     warn: 100  # Milliseconds
+#     crit: 200  # Milliseconds
+#   - metric: request_timer.95%
+#     description: 95th percentile query response time
+#     warn: 200  # Milliseconds
+#     crit: 300  # Milliseconds
+#   - metric: request_timer.99%
+#     description: 99th percentile query response time
+#     warn: 400  # Milliseconds
+#     crit: 500  # Milliseconds
+#   - metric: active_requests.count
+#     description: active N1QL requests
+#     warn: 1000
+#     crit: 1500
+#   - metric: request_rate.1m.rate
+#     description: query throughput 1 minute
+#     warn: 900
+#     crit: 950
+#   - metric: request_rate.5m.rate
+#     description: query throughput 5 minute
+#     warn: 800
+#     crit: 850
+#   - metric: request_rate.15m.rate
+#     description: query throughput 15 minute
+#     warn: 700
+#     crit: 750
+
+# The username of the Couchbase cluster
+username: {{ mon_user }}
+
+# Enable debugging logging
+# verbose: false
+
+# XDCR
+#  All metric names documented here:
+#  https://developer.couchbase.com/documentation/server/current/rest-api/rest-xdcr-statistics.html
+#
+#  Note that these metrics will be applied to each XDCR replication independently
+# xdcr:
+# - metric: status
+#   description: replication status
+#   warn: paused
+#   crit: notRunning
+#   op: "="
+

@@ -1,0 +1,90 @@
+# ---
+# The archive directory used to store backup data
+archive: /opt/couchbase/var/lib/couchbase/backups
+
+# The backup manager executable
+# cbbackupmgr: /opt/couchbase/bin/cbbackupmgr
+
+# The hostname of the Couchbase cluster
+cluster: localhost
+
+# Do not use, path to config file
+# config: null
+
+# Create archvie and repo if they don't exist
+# create: false
+
+# Do not use, dump the config to yaml
+# dump: false
+
+# The file to write results to
+file: /var/log/couchbase/backup_couchbase.rpt
+
+# The format in which to print results. The str of str.format(). {host}, {action}, {status} are the only variables
+# format: '{host}:{action}:{status}'
+
+# The number of backups to keep
+# keep: 3
+
+# logging config, both may be enabled at same time, update filename to point to location of choice. i.e. /var/log/couchbase/backup_couchbase.log
+logging:
+  formatters:
+    simple:
+      format: '%(asctime)s %(levelname)s %(message)s'
+    simple_syslog:
+      format: 'Couchbase %(levelname)s %(message)s'
+  handlers:
+    # console:
+    #   class: logging.StreamHandler
+    #   formatter: simple
+    #   level: DEBUG
+    #   stream: ext://sys.stdout
+    file:
+      class: logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: simple
+      filename: /var/log/couchbase/backup_couchbase.log
+      maxBytes: 1000000
+      backupCount: 3
+    # syslog:
+    #   class: logging.handlers.SysLogHandler
+    #   formatter: simple_syslog
+    #   address: /dev/log
+    #   facility: user
+    #   level: WARNING
+  root:
+    handlers:
+    # - console
+    - file
+    # - syslog
+    level: INFO
+  version: 1
+
+# The password of the Couchbase cluster
+password: {{ mon_pass }}
+
+# If the last backup failed before it finished then delete the last backup and backup from the last successful backup
+# purge: false
+
+# The name of the backup repository to backup data to
+repo: local
+
+# The day(s) of the week to perform merge operation, list. Case sensative, must be init cap and full spelling.
+schedule:
+- Sunday
+# - Monday
+# - Tuesday
+# - Wednesday
+# - Thursday
+# - Friday
+# - Saturday
+
+# The amount of parallelism to use
+# threads: 1
+
+# The username of the Couchbase cluster
+username: {{ mon_user }}
+
+# Enable debugging logging
+# verbose: false
+
