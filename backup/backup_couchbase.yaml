@@ -1,6 +1,6 @@
 # ---
 # The archive directory used to store backup data
-archive: /opt/couchbase/var/lib/couchbase/backups
+archive: /datadisk/backups
 
 # The backup manager executable
 # cbbackupmgr: /opt/couchbase/bin/cbbackupmgr
