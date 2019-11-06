@@ -1,11 +1,9 @@
 # ---
 # The archive directory used to store backup data
-# archive: /datadisk/backups
-archive: /var/tmp/couchbase
+archive: /datadisk/backups
 
 # The backup manager executable
 # cbbackupmgr: /opt/couchbase/bin/cbbackupmgr
-cbbackupmgr: cbbackupmgr
 
 # The hostname of the Couchbase cluster
 cluster: localhost
@@ -78,5 +76,5 @@ schedule: sunday
 username: readonly
 
 # Enable debugging logging
-verbose: true
+# verbose: false
 
