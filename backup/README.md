@@ -70,3 +70,43 @@ optional arguments:
   --verbose             Enable debugging logging (default: False)
 
 ```
+
+```
+usage: backup_couchbase_fi.py [-h] [--archive ARCHIVE]
+                              [--cbbackupmgr CBBACKUPMGR] [--config CONFIG]
+                              [--cluster CLUSTER] [--dump] [--file FILE]
+                              [--format FORMAT] [--keep KEEP] [--purge]
+                              [--password PASSWORD]
+                              [--schedule {Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}]
+                              [--threads THREADS] [--username USERNAME]
+                              [--verbose]
+ 
+optional arguments:
+  -h, --help            show this help message and exit
+  --archive ARCHIVE     The archive directory used to store backup data
+                        (default: /opt/couchbase/var/lib/couchbase/backups)
+  --cbbackupmgr CBBACKUPMGR
+                        The backup manager executable (default:
+                        /opt/couchbase/bin/cbbackupmgr)
+  --config CONFIG       The path to YAML config file, reading config file
+                        overrides args default values (default: None)
+  --cluster CLUSTER     The hostname of the Couchbase cluster (default:
+                        localhost)
+  --dump                Dump the configuration values (default: False)
+  --file FILE           The file to write results to (default: None)
+  --format FORMAT       The format in which to print results. The str of
+                        str.format() (default: {host}:{action}:{status})
+  --keep KEEP           The number of repos to keep (default: 3)
+  --purge               If the last backup failed before it finished then
+                        delete the last backup and backup from the last
+                        successful backup (default: False)
+  --password PASSWORD   The password of the Couchbase cluster (default:
+                        secret)
+  --schedule {Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}
+                        The day of the week to create a new repo (default:
+                        Saturday)
+  --threads THREADS     The amount of parallelism to use (default: 1)
+  --username USERNAME   The username of the Couchbase cluster (default:
+                        readonly)
+  --verbose             Enable debugging logging (default: False)
+  ```
